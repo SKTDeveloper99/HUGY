@@ -37,8 +37,8 @@ class _ProfilePageState extends State<ProfilePage> {
           ListTile(
             leading: Text("Logout"),
             trailing: Icon(Icons.logout),
-            onTap: () {
-              FirebaseAuth.instance.signOut();
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (context) => const SplashScreen()));
             },

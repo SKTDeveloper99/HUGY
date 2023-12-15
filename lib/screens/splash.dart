@@ -12,6 +12,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final user = FirebaseAuth.instance.currentUser;
   @override
   void setState(VoidCallback fn) {
     if (mounted) {
@@ -26,15 +27,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Future.delayed(Duration(seconds: 3), () {
       setState(() {
-        FirebaseAuth.instance.authStateChanges().listen((User? user) {
-          if (user == null) {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const Registration()));
-          } else {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const Dashboard()));
-          }
-        });
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return AuthGate();
+        }));
       });
     });
   }
@@ -59,5 +55,20 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
+  }
+}
+
+class AuthGate extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (BuildContext, AsyncSnapshot<User?> snapshot) {
+          if (snapshot.hasData) {
+            return Dashboard();
+          } else {
+            return Registration();
+          }
+        });
   }
 }

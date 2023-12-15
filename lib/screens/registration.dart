@@ -3,19 +3,71 @@ import 'package:hugy/auth/firebase.dart';
 import 'package:hugy/screens/splash.dart';
 
 // LOGIN SCREEN
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginPageState extends State<LoginPage> {
+  bool _loginError = false;
+
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Login"), centerTitle: true),
-    );
+        appBar: AppBar(title: const Text('Login')),
+        body: Padding(
+          padding: const EdgeInsets.all(30),
+          child: Column(
+            children: [
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(helperText: 'Email'),
+              ),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(helperText: 'Password'),
+              ),
+              _loginError
+                  ? const Text('Invalid login information')
+                  : Container(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                child: ElevatedButton(
+                  child: const Text('Login'),
+                  onPressed: () async {
+                    // ADDED NEW FEATURE
+                    await AuthService()
+                        .login(_emailController.text, _passwordController.text)
+                        .then((bool success) {
+                      if (!success) {
+                        setState(() {
+                          _loginError = true;
+                        });
+                      } else {
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (ctx) => AuthGate()));
+                      }
+                    });
+                    // FINISHED ADDING NEW FEATURE
+                  },
+                ),
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => Registration()));
+                  },
+                  child: Text("Create an account instead")),
+            ],
+          ),
+        ));
   }
 }
 
@@ -134,7 +186,7 @@ class _RegistrationState extends State<Registration> {
                       onPressed: () {
                         Navigator.of(context).pushReplacement(
                             MaterialPageRoute(builder: (context) {
-                          return LoginScreen();
+                          return LoginPage();
                         }));
                       },
                       child: Text("Login instead")),
