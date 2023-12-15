@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hugy/screens/splash.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -24,6 +26,22 @@ class _ProfilePageState extends State<ProfilePage> {
           ListTile(
             leading: Text("Name"),
             trailing: Text("User Name"),
+          ),
+          ListTile(
+            leading: Text("Email"),
+            trailing: Text(FirebaseAuth.instance.currentUser!.email!),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ListTile(
+            leading: Text("Logout"),
+            trailing: Icon(Icons.logout),
+            onTap: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => const SplashScreen()));
+            },
           ),
         ],
       ),

@@ -28,28 +28,29 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget _buildDoor(String doorName, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 500),
-        curve: Curves.ease,
-        margin: EdgeInsets.only(
-            top: 50, bottom: 50, left: currentDoor == 0 ? 50 : 0, right: 50),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: AssetImage("assets/backgrounds/door.jpg"),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        InkWell(
+          onTap: onTap,
+          child: AnimatedContainer(
+            height: 300,
+            width: 171,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.ease,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.fitHeight,
+                image: AssetImage("assets/backgrounds/pixel_door.jpg"),
+              ),
+            ),
           ),
         ),
-        child: Container(
-          child: Center(
-              child: Text(
-            doorName,
-            style: TextStyle(fontSize: 30),
-          )),
+        Text(
+          doorName,
+          style: TextStyle(fontSize: 30),
         ),
-      ),
+      ],
     );
   }
 
@@ -62,7 +63,7 @@ class _DashboardState extends State<Dashboard> {
           decoration: BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.cover,
-              image: AssetImage("assets/backgrounds/sky.jpg"),
+              image: AssetImage("assets/backgrounds/sky2.jpg"),
             ),
           ),
           child: Column(

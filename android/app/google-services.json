@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1025107317305",
+    "project_id": "hugy-e8e0a",
+    "storage_bucket": "hugy-e8e0a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1025107317305:android:6c006cffa537dba80333e8",
+        "android_client_info": {
+          "package_name": "com.example.hugy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqRXKEAHVo2mMmUPTUGdVdudjuBj1l0eQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
