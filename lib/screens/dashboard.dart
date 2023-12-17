@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugy/screens/chat.dart';
 import 'package:hugy/screens/contacts.dart';
 import 'package:hugy/screens/discover.dart';
 import 'package:hugy/screens/profile.dart';
@@ -78,7 +79,6 @@ class _DashboardState extends State<Dashboard> {
                       });
                     },
                     children: [
-                      _buildDoor("Chats", () {}),
                       _buildDoor("Contacts", () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {

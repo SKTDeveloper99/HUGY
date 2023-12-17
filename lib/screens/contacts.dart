@@ -1,4 +1,10 @@
+import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hugy/chat/chat.dart';
+import 'package:hugy/screens/chat.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -9,6 +15,15 @@ class ContactsPage extends StatefulWidget {
 
 class _ContactsPageState extends State<ContactsPage> {
   TextEditingController _searchController = TextEditingController();
+
+  Stream loadChats() {
+    final user_id = FirebaseAuth.instance.currentUser!.uid;
+    return FirebaseFirestore.instance
+        .collection('chats')
+        .where('owner', isEqualTo: user_id)
+        .snapshots();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +32,44 @@ class _ContactsPageState extends State<ContactsPage> {
         title: Text("Contacts"),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              TextEditingController _botNameController =
+                  TextEditingController();
+              // display dialog to add new bot
+              showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                        title: Text("Add New Bot"),
+                        content: TextField(
+                          controller: _botNameController,
+                          decoration: InputDecoration(
+                            labelText: "Bot Name",
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () async {
+                                final user_id =
+                                    FirebaseAuth.instance.currentUser!.uid;
+                                Chat chat = Chat(
+                                    chatName: _botNameController.text,
+                                    id: (user_id.hashCode +
+                                            Random().nextInt(100))
+                                        .toString(),
+                                    messages: [],
+                                    owner: user_id);
+                                await ChatService().createNewChat(chat);
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("Add")),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("Cancel")),
+                        ],
+                      ));
+            },
             icon: Icon(Icons.person_add),
           ),
         ],
@@ -31,6 +83,34 @@ class _ContactsPageState extends State<ContactsPage> {
                 labelText: 'Search',
                 prefixIcon: Icon(Icons.search)),
           ),
+          StreamBuilder(
+              stream: loadChats(),
+              builder: (ctx, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+
+                final chatDocs = snapshot.data.docs;
+
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: chatDocs.length,
+                    itemBuilder: (ctx, index) {
+                      return ListTile(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (BuildContext ctx) {
+                            return ChatPage(
+                              chat: chatDocs[index],
+                            );
+                          }));
+                        },
+                        title: Text(chatDocs[index]['chatName']),
+                      );
+                    },
+                  ),
+                );
+              })
         ],
       ),
     );
