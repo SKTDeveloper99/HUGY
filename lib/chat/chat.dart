@@ -32,6 +32,21 @@ class Chat {
       chatName: map['chatName'],
     );
   }
+
+  factory Chat.fromJson(Map<String, dynamic> json) {
+    return Chat(
+        chatName: json["chatName"],
+        id: json["id"],
+        messages: json["messages"],
+        owner: json["owner"]);
+  }
+
+  Chat.fromDocumentSnapshot(DocumentSnapshot documentSnapshot)
+      : id = documentSnapshot.id,
+        chatName = documentSnapshot['chatName'],
+        owner = documentSnapshot['owner'],
+        messages = List<Message>.from(
+            documentSnapshot['messages']?.map((x) => Message.fromMap(x)));
 }
 
 Stream getChatStream(String chatId) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugy/screens/chat.dart';
 import 'package:hugy/screens/contacts.dart';
 import 'package:hugy/screens/discover.dart';
+import 'package:hugy/screens/journal.dart';
 import 'package:hugy/screens/profile.dart';
 
 class Dashboard extends StatefulWidget {
@@ -97,6 +98,12 @@ class _DashboardState extends State<Dashboard> {
                           return ProfilePage();
                         }));
                       }),
+                      _buildDoor("Journal", () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return JournalPage();
+                        }));
+                      })
                     ],
                   ),
                 ),

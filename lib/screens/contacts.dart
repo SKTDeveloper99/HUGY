@@ -101,7 +101,7 @@ class _ContactsPageState extends State<ContactsPage> {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (BuildContext ctx) {
                             return ChatPage(
-                              chat: chatDocs[index],
+                              chatId: chatDocs[index]['id'],
                             );
                           }));
                         },

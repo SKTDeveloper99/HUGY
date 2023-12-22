@@ -5,7 +5,7 @@ String? TOKEN = Platform.environment['token'];
 
 Future<String> getResponse(String message) async {
   final openAI = OpenAI.instance.build(
-      token: TOKEN!,
+      token: "",
       baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)));
 
   final completion = ChatCompleteText(messages: [
