@@ -4,6 +4,162 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hugy/screens/registration.dart';
 
+import 'dart:math';
+
+class TwinkleLittleStar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1.0,
+      height: 1.0,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+    );
+  }
+}
+
+class Space extends StatefulWidget {
+  Space({required this.opacity});
+
+  final Animation<double> opacity;
+
+  @override
+  _SpaceState createState() => _SpaceState();
+}
+
+class _SpaceState extends State<Space> {
+  final int _starCount = 300;
+
+  List<Widget> _stars = [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // We generate our stars in this method so that it builds only once
+    // but after the initState method has finished running.
+    _stars = _generateStars();
+  }
+
+  List<Widget> _generateStars() {
+    return List.generate(_starCount, (index) {
+      List<double> xy = _getRandomPosition(context);
+      return Positioned(
+        top: xy[0],
+        left: xy[1],
+        child: TwinkleLittleStar(),
+      );
+    });
+  }
+
+  List<double> _getRandomPosition(BuildContext context) {
+    // We get the dimensions of the screen and use them to generate random coordinates
+    double x = MediaQuery.of(context).size.height;
+    double y = MediaQuery.of(context).size.width;
+
+    double randomX =
+        double.parse((Random().nextDouble() * x).toStringAsFixed(3));
+    double randomY =
+        double.parse((Random().nextDouble() * y).toStringAsFixed(3));
+
+    return [randomX, randomY];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: widget.opacity.value,
+      child: Material(
+        type: MaterialType.transparency,
+        child: Container(
+          color: Colors.black,
+          child: Stack(
+            children: _stars,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class IntroTitle extends StatelessWidget {
+  const IntroTitle({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      "HUGY...",
+      style: TextStyle(
+        color: Color.fromARGB(255, 241, 190, 19),
+        fontSize: 72.0,
+      ),
+    );
+  }
+}
+
+class CrawlingText extends StatelessWidget {
+  CrawlingText(
+      {required this.topMargin,
+      required this.bottomMargin,
+      required this.opacity});
+
+  // The `topMargin` and `bottomMargin` values are what are used to acheive the crawling effect
+  final Animation<double> topMargin;
+  final Animation<double> bottomMargin;
+  final Animation<double> opacity;
+
+  final TextStyle _crawlingTextStyle = TextStyle(
+    color: Color(0xFFFFC500),
+    fontSize: 40.0,
+    fontWeight: FontWeight.bold,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final double maxWidthConstraint = MediaQuery.of(context).size.width * 0.6;
+
+    return Opacity(
+      opacity: opacity.value,
+      child: Center(
+        child: Transform(
+          // This transformation adjusts it's child to achieve the perspective angle we want
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.007)
+            ..rotateX(5.6),
+          alignment: FractionalOffset.center,
+          child: Container(
+            // Adjust the margins above and below the text to make it simulate upward movement
+            margin: EdgeInsets.only(
+                top: topMargin.value, bottom: bottomMargin.value),
+            child: FittedBox(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: maxWidthConstraint < 500
+                      ? MediaQuery.of(context).size.width
+                      : maxWidthConstraint,
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 64.0),
+                child: Column(
+                  children: [
+                    Text(
+                      'Episode VII\nTHE FORCE AWAKENS',
+                      textAlign: TextAlign.center,
+                      style: _crawlingTextStyle,
+                    ),
+                    IntroTitle(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -40,18 +196,10 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-              Colors.blue,
-              Colors.red,
-            ])),
+          color: Colors.black,
+        ),
         child: Center(
-          child: Text(
-            "Hugy",
-            style: TextStyle(fontSize: 50),
-          ),
+          child: IntroTitle(),
         ),
       ),
     );

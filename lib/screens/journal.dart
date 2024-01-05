@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugy/models/log.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class JournalPage extends StatefulWidget {
   const JournalPage({super.key});
@@ -8,12 +11,37 @@ class JournalPage extends StatefulWidget {
 }
 
 class _JournalPageState extends State<JournalPage> {
-  // dummy data
+  TextEditingController logController = TextEditingController();
 
-  var journals = [
-    {"name": "Journal 1", "content": "This is journal 1"},
-    {"name": "Journal 2", "content": "This is journal 2"},
-  ];
+  String truncate(String data) {
+    if (data.length > 15) {
+      return data.substring(0, 15);
+    } else {
+      return data;
+    }
+  }
+
+  Widget lastFiveList() {
+    return StreamBuilder(
+        stream: LogService().getLastFiveLogs(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return snapshot.hasData && snapshot.data.docs.length > 0
+              ? ListView.builder(
+                  itemCount: snapshot.data.docs.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    var entry = Log.fromMap(snapshot.data.docs[index].data());
+                    return ListTile(
+                      title: Text(entry.getTitle()),
+                      subtitle: Text(truncate(entry.content)),
+                    );
+                  },
+                )
+              : Center(
+                  child: Text("No Logs found"),
+                );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +60,7 @@ class _JournalPageState extends State<JournalPage> {
                 ),
                 height: 300,
                 child: TextField(
+                  controller: logController,
                   textAlign: TextAlign.start,
                   textAlignVertical: TextAlignVertical.top,
                   maxLines: null,
@@ -47,6 +76,27 @@ class _JournalPageState extends State<JournalPage> {
                   ),
                 ),
               ),
+              ElevatedButton(
+                  onPressed: () async {
+                    var timeCreated = DateTime.now();
+                    var title = DateFormat('dd MM yyyy').format(timeCreated);
+                    var id = title.hashCode ^
+                        timeCreated.hashCode ^
+                        logController.text.hashCode;
+
+                    var log = Log(
+                        id: id.toString(),
+                        title: title,
+                        content: logController.text,
+                        timeCreated: timeCreated);
+
+                    await LogService().uploadLog(log);
+
+                    setState(() {
+                      logController.clear();
+                    });
+                  },
+                  child: Text("Submit")),
               const SizedBox(height: 20),
               Expanded(
                 child: Container(
@@ -67,14 +117,7 @@ class _JournalPageState extends State<JournalPage> {
                         ),
                       )),
                       Expanded(
-                        child: ListView.builder(
-                            itemCount: journals.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(journals[index]["name"]!),
-                                subtitle: Text(journals[index]["content"]!),
-                              );
-                            }),
+                        child: lastFiveList(),
                       ),
                     ],
                   ),
