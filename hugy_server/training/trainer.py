@@ -47,13 +47,18 @@ print(classification_report(y_test, y_pred))
 
 # Save the model
 import pickle
-pickle.dump(classifier, open('model.pkl', 'wb'))
+
+model = {
+    'classifier': classifier,
+    'vectorizer': vectorizer
+}
+
+pickle.dump(model, open('model.pkl', 'wb'))
 
 if __name__ == '__main__':
     # test the model
     text = "I am mad today"
     text = preprocess_text(text)
-    print(text)
     text_vector = vectorizer.transform([text])
     print(classifier.predict(text_vector))
 

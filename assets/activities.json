@@ -1,0 +1,26 @@
+{
+    "joy": [
+        "Take a walk to the park",
+        "Go to the beach",
+        "Go to the movies",
+        "Go to the mall",
+        "Go to the park",
+        "Babysit a friend"
+    ],
+    "anger": [
+        "Practice deep breathing exercises",
+        "Engage in a physical activity like jogging or boxing",
+        "Write in a journal to express your feelings",
+        "Listen to music or a podcast to calm down",
+        "Take a break and step away from the situation",
+        "Seek support from a friend or loved one"
+    ],
+    "sadness": [
+        "Watch a comforting movie or TV show",
+        "Read a book or listen to an audiobook",
+        "Engage in a creative activity like painting or writing",
+        "Reach out to a friend or family member for support",
+        "Take a nap or get a good night's sleep",
+        "Practice mindfulness or meditation"
+    ]
+}

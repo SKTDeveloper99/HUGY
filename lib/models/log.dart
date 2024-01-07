@@ -64,7 +64,7 @@ class LogService {
     return true; //succesfully uploaded the log entry
   }
 
-  Future<bool> deleteLog(int hashCode) async {
+  Future<bool> deleteLog(String hashCode) async {
     try {
       await _firestore.collection('entries').doc(hashCode.toString()).delete();
     } catch (e) {

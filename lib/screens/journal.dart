@@ -14,8 +14,8 @@ class _JournalPageState extends State<JournalPage> {
   TextEditingController logController = TextEditingController();
 
   String truncate(String data) {
-    if (data.length > 15) {
-      return data.substring(0, 15);
+    if (data.length > 27) {
+      return data.substring(0, 27);
     } else {
       return data;
     }
@@ -33,6 +33,12 @@ class _JournalPageState extends State<JournalPage> {
                     return ListTile(
                       title: Text(entry.getTitle()),
                       subtitle: Text(truncate(entry.content)),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          LogService().deleteLog(entry.id);
+                        },
+                      ),
                     );
                   },
                 )
