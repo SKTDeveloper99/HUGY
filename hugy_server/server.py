@@ -7,11 +7,14 @@ app = Flask(__name__)
 def index():
     return 'Mood predictor version 1.0'
 
-@app.route('/predict/<text>', methods=['GET'])
-def predict(text):
-    text = request.args.get('text')
+#post method
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.get_json(force=True)
+    text = data['text']
     prediction = predict_mood(text)
-    return jsonify({'prediction': prediction})
+    return jsonify(prediction)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -6,16 +6,19 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-var endpoint = "http://127.0.0.1:5000";
+var endpoint = "http://10.0.2.2:5000";
 
 Future<String?> getMood(String text) async {
-  Uri uri = Uri.parse("$endpoint/predict/$text");
+  print("getting mood");
+  Uri uri = Uri.parse("$endpoint/predict");
   try {
-    await http.get(uri).then((value) {
-      return jsonDecode(value.body)['prediction'];
-    });
+    var response = await http.post(uri,
+        body: jsonEncode({"text": text}),
+        headers: {HttpHeaders.contentTypeHeader: "application/json"});
+    print(response.body);
+    return jsonDecode(response.body)['prediction'];
   } catch (e) {
-    print(e);
+    return "joy";
   }
 }
 
@@ -25,30 +28,19 @@ Future<List<String>> getActivity() async {
 
   var query = collection.orderBy('timeCreated', descending: true).limit(1);
 
-  var snapshot = await query.get().then((value) => value.docs[0].data());
+  var snapshot =
+      (await query.get().then((value) => value.docs[0].data()))['content'];
 
-  if (snapshot == null) {
-    return [];
-  }
-
-  String? mood = await getMood(snapshot['content']);
+  String? mood = await getMood(snapshot);
+  print("mood: $mood");
 
   final String response = await rootBundle.loadString('assets/activities.json');
-  final data = await jsonDecode(response);
+  Map<String, dynamic> data = await jsonDecode(response);
 
-  var activities_for_mood = data[mood];
+  List<String> activities = (data[mood] as List<dynamic>)
+      .map((e) => e.toString())
+      .toList()
+      .cast<String>();
 
-  activities_for_mood.shuffle();
-
-  // pick 5
-  var random = new Random();
-  var activities = [];
-  var cap = activities_for_mood.length > 5 ? 5 : activities_for_mood.length;
-
-  for (var i = 0; i < cap; i++) {
-    activities
-        .add(activities_for_mood[random.nextInt(activities_for_mood.length)]);
-  }
-
-  return activities.cast<String>();
+  return activities;
 }

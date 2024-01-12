@@ -3,6 +3,7 @@ import 'package:hugy/screens/dashboard.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hugy/screens/registration.dart';
+import 'package:hugy/screens/home.dart';
 
 import 'dart:math';
 
@@ -213,7 +214,7 @@ class AuthGate extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext, AsyncSnapshot<User?> snapshot) {
           if (snapshot.hasData) {
-            return Dashboard();
+            return Home();
           } else {
             return Registration();
           }

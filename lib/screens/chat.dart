@@ -16,11 +16,11 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   TextEditingController _messageController = TextEditingController();
 
-  Future<void> getBotResponse(String message) async {
+  Future<void> getBotResponse(String message, String behavior) async {
     final bot_id = widget.chatId;
 
     //get response
-    await getResponse(message)
+    await getResponse(message, behavior)
         .then((value) => {
               //add response to chat
               ChatService().addMessage(
@@ -98,6 +98,8 @@ class _ChatPageState extends State<ChatPage> {
                     child: TextField(
                       controller: _messageController,
                       onSubmitted: (value) async {
+                        String behavior =
+                            await getBehavior(widget.chatId); // get behavior
                         Message message = Message(
                           content: value,
                           isMe: true,
@@ -105,7 +107,7 @@ class _ChatPageState extends State<ChatPage> {
                         );
                         await ChatService().addMessage(widget.chatId, message);
 
-                        await getBotResponse(message.content);
+                        await getBotResponse(message.content, behavior);
 
                         // setState
                         setState(() {

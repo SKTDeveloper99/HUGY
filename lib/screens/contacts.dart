@@ -6,6 +6,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hugy/chat/chat.dart';
 import 'package:hugy/screens/chat.dart';
 
+List<Map<String, dynamic>> chatBots = [
+  {
+    "name": "June",
+    "description": "Mental Health Expert",
+    "behavior":
+        "You are a mental health expert. You will give advice and useful information to users."
+  },
+  {
+    "name": "Domino",
+    "description": "Riddler",
+    "behavior": "You are a playful bot. You will ask riddles to users."
+  },
+  {
+    "name": "May",
+    "description": "Humurous and helpful bot",
+    "behavior":
+        " Witty and Humorous: This character has a witty and humorous personality, using humor to relieve stress and confusion. They can offer lighthearted conversations and suggestions to help users relax in a fun atmosphere."
+  }
+];
+
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
 
@@ -36,7 +56,7 @@ class _ContactsPageState extends State<ContactsPage> {
               TextEditingController _botNameController =
                   TextEditingController();
               // display dialog to add new bot
-              showDialog(
+              /* showDialog(
                   context: context,
                   builder: (ctx) => AlertDialog(
                         title: Text("Add New Bot"),
@@ -68,7 +88,33 @@ class _ContactsPageState extends State<ContactsPage> {
                               },
                               child: Text("Cancel")),
                         ],
-                      ));
+                      )); */
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return ListView.builder(
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(chatBots[index]["name"]),
+                          subtitle: Text(chatBots[index]["description"]),
+                          onTap: () async {
+                            final user_id =
+                                FirebaseAuth.instance.currentUser!.uid;
+                            Chat chat = Chat(
+                                chatName: chatBots[index]["name"],
+                                id: (user_id.hashCode + Random().nextInt(100))
+                                    .toString(),
+                                messages: [],
+                                owner: user_id,
+                                behavior: chatBots[index]["behavior"]);
+                            await ChatService().createNewChat(chat);
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                      itemCount: chatBots.length,
+                    );
+                  });
             },
             icon: Icon(Icons.person_add),
           ),

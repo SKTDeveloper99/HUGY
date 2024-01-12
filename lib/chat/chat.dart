@@ -5,12 +5,14 @@ class Chat {
   List<Message> messages;
   String chatName;
   String owner;
+  String behavior;
   String id; //hashcode of user and bot
 
   Chat({
     required this.chatName,
     required this.messages,
     required this.owner,
+    required this.behavior,
     required this.id,
   });
 
@@ -20,6 +22,7 @@ class Chat {
       'owner': owner,
       'id': id,
       'chatName': chatName,
+      'behavior': behavior,
     };
   }
 
@@ -30,6 +33,7 @@ class Chat {
       owner: map['owner'],
       id: map['id'],
       chatName: map['chatName'],
+      behavior: map['behavior'],
     );
   }
 
@@ -38,6 +42,7 @@ class Chat {
         chatName: json["chatName"],
         id: json["id"],
         messages: json["messages"],
+        behavior: json["behavior"],
         owner: json["owner"]);
   }
 
@@ -45,12 +50,21 @@ class Chat {
       : id = documentSnapshot.id,
         chatName = documentSnapshot['chatName'],
         owner = documentSnapshot['owner'],
+        behavior = documentSnapshot['behavior'],
         messages = List<Message>.from(
             documentSnapshot['messages']?.map((x) => Message.fromMap(x)));
 }
 
 Stream getChatStream(String chatId) {
   return FirebaseFirestore.instance.collection('chats').doc(chatId).snapshots();
+}
+
+Future<String> getBehavior(String chatId) {
+  return FirebaseFirestore.instance
+      .collection('chats')
+      .doc(chatId)
+      .get()
+      .then((value) => value['behavior']);
 }
 
 class ChatService {
