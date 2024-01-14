@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:hugy/main.dart';
 import 'package:hugy/screens/home.dart';
 
@@ -14,32 +13,26 @@ class MeditationPage extends StatefulWidget {
 
 class _MeditationPageState extends State<MeditationPage> {
   Timer? _timer;
-  Duration _clockTime = Duration(seconds: 0);
 
   int _seconds = 0;
-  int _minutes = 1;
-  int _hours = 0;
+  final int max_seconds = 60 * 60 * 24;
 
   String formatTime(int time) {
-    return time.toString().padLeft(2, '0');
+    int hours = time ~/ 3600;
+    int minutes = (time - hours * 3600) ~/ 60;
+    int seconds = time - hours * 3600 - minutes * 60;
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
+
+  void startTimer() {}
+  void stopTimer() {}
+  void resetTimer() {}
 
   Widget buildClock() {
     return Container(
-      child: TimerCountdown(
-        format: CountDownTimerFormat.hoursMinutesSeconds,
-        endTime: DateTime.now().add(
-          Duration(
-            days: 0,
-            hours: _hours,
-            minutes: _minutes,
-            seconds: _seconds,
-          ),
-        ),
-        onEnd: () {
-          // show complete dialog
-          print("end");
-        },
+      child: Text(
+        '${formatTime(_seconds)}',
+        style: TextStyle(fontSize: 60),
       ),
     );
   }
