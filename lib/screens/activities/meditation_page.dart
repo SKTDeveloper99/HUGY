@@ -16,7 +16,7 @@ class _MeditationPageState extends State<MeditationPage> {
 
   String twoDigits(int n) => n.toString().padLeft(2, "0");
 
-  int max_seconds = 60 * 5;
+  int max_seconds = 60 * 2;
   Duration duration = Duration();
 
   int _seconds = 0;
@@ -40,8 +40,9 @@ class _MeditationPageState extends State<MeditationPage> {
 
   void updateTimer() {
     setState(() {
-      duration = Duration(seconds: max_seconds);
       max_seconds--;
+      duration = Duration(seconds: max_seconds);
+
       _seconds = duration.inSeconds;
       _minutes = duration.inMinutes;
       _hours = duration.inHours;
@@ -64,7 +65,7 @@ class _MeditationPageState extends State<MeditationPage> {
   // set the timer to zero seconds
   void resetTimer() {
     setState(() {
-      max_seconds = 60 * 5;
+      max_seconds = 60 * 2;
       duration = Duration(seconds: max_seconds);
       _seconds = duration.inSeconds;
       _minutes = duration.inMinutes;
@@ -74,6 +75,7 @@ class _MeditationPageState extends State<MeditationPage> {
 
   Widget buildTimeSlot(int time) {
     return Container(
+      color: Colors.white,
       width: 50,
       height: 50,
       child: Card(
