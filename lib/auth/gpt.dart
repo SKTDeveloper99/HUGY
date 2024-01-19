@@ -19,7 +19,7 @@ Future<String> getResponse(String message, String behavior) async {
             if (response == null)
               {"Could not get response"}
             else
-              {response.choices[0].message!.content}
+              response.choices[0].message!.content
           });
 
   return res.toString();

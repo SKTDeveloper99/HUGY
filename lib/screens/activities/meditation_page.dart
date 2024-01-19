@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:hugy/main.dart';
-import 'package:hugy/screens/home.dart';
+import 'package:hugy/auth/firebase.dart';
 
 class MeditationPage extends StatefulWidget {
   const MeditationPage({super.key});
@@ -13,80 +12,67 @@ class MeditationPage extends StatefulWidget {
 
 class _MeditationPageState extends State<MeditationPage> {
   Timer? _timer;
+  ValueNotifier<int> timeLeft = ValueNotifier<int>(0);
 
   String twoDigits(int n) => n.toString().padLeft(2, "0");
 
-  int max_seconds = 60 * 2;
-  Duration duration = Duration();
-
-  int _seconds = 0;
-  int _minutes = 0;
-  int _hours = 0;
+  Duration duration = const Duration(minutes: 5);
 
   @override
   void initState() {
     super.initState();
-    duration = Duration(seconds: max_seconds);
-    _seconds = duration.inSeconds;
-    _minutes = duration.inMinutes;
-    _hours = duration.inHours;
   }
 
   @override
   void dispose() {
-    stopTimer();
+    _timer?.cancel();
     super.dispose();
   }
 
   void updateTimer() {
-    setState(() {
-      max_seconds--;
-      duration = Duration(seconds: max_seconds);
+    if (!mounted) return;
 
-      _seconds = duration.inSeconds;
-      _minutes = duration.inMinutes;
-      _hours = duration.inHours;
+    setState(() {
+      if (duration.inMinutes > 0) {
+        duration = Duration(seconds: duration.inSeconds - 1);
+      } else {
+        stopTimer();
+        AuthService().addCoins(100);
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text("Meditation Complete!"),
+                  content: Text("You have earned 100 coins!"),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text("OK"))
+                  ],
+                ));
+      }
     });
   }
 
   void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (_) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       updateTimer();
     });
   }
 
   void stopTimer() {
+    if (!mounted) return;
+
     // cancel the timer
-    if (_timer != null) {
-      _timer!.cancel();
-    }
+    _timer?.cancel();
   }
 
   // set the timer to zero seconds
   void resetTimer() {
     setState(() {
-      max_seconds = 60 * 2;
-      duration = Duration(seconds: max_seconds);
-      _seconds = duration.inSeconds;
-      _minutes = duration.inMinutes;
-      _hours = duration.inHours;
+      duration = const Duration(minutes: 5);
+      // update the time slots, so they are displayed correctly
+      // use math to ensure that values are wrapped
     });
-  }
-
-  Widget buildTimeSlot(int time) {
-    return Container(
-      color: Colors.white,
-      width: 50,
-      height: 50,
-      child: Card(
-        child: Center(
-          child: Text(
-            twoDigits(time),
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
-      ),
-    );
   }
 
   Widget buildClock() {
@@ -94,20 +80,12 @@ class _MeditationPageState extends State<MeditationPage> {
         width: 200,
         height: 200,
         child: Stack(fit: StackFit.expand, children: [
-          CircularProgressIndicator(
-            value: duration.inSeconds / max_seconds,
-            strokeWidth: 10,
-          ),
           Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                buildTimeSlot(_hours),
-                buildTimeSlot(_minutes),
-                buildTimeSlot(_seconds),
-              ],
+            child: Text(
+              "${twoDigits(duration.inHours.remainder(24))}:${twoDigits(duration.inMinutes.remainder(60))}:${twoDigits(duration.inSeconds.remainder(60))}",
+              style: TextStyle(fontSize: 24),
             ),
-          )
+          ),
         ]));
   }
 
@@ -122,11 +100,12 @@ class _MeditationPageState extends State<MeditationPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   buildClock(),
+                  SizedBox(height: 80),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             setState(() => startTimer());
                           },
                           child: Text("Start")),

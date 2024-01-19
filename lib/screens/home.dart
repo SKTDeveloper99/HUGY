@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hugy/auth/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:hugy/screens/activities/meditation_page.dart';
 import 'package:hugy/screens/contacts.dart';
@@ -14,6 +15,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int coins = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // getCoins();
+  }
+
   Widget userPanel() {
     return InkWell(
       onTap: () {
@@ -36,7 +45,7 @@ class _HomeState extends State<Home> {
               Icons.money,
               color: Colors.yellow,
             ),
-            Text("100"),
+            Text("$coins"),
           ],
         ),
       ),
@@ -113,6 +122,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    AuthService().getCoins().then((value) {
+      setState(() {
+        coins = value;
+      });
+    });
     return SafeArea(
       child: Scaffold(
         body: Container(

@@ -87,4 +87,15 @@ class LogService {
   Future<DocumentSnapshot> getLog(String id) async {
     return await _firestore.collection('entries').doc(id).get();
   }
+
+  Future<List<Log>> getLogs() async {
+    List<Log> logs = [];
+    await _firestore.collection('entries').get().then((value) {
+      value.docs.forEach((element) {
+        logs.add(Log.fromMap(element.data()));
+      });
+    });
+
+    return logs;
+  }
 }

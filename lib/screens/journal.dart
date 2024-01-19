@@ -12,7 +12,7 @@ class JournalPage extends StatefulWidget {
 
 class _JournalPageState extends State<JournalPage> {
   TextEditingController logController = TextEditingController();
-
+  List<Log> logs = [];
   String truncate(String data) {
     if (data.length > 27) {
       return data.substring(0, 27);
@@ -21,116 +21,81 @@ class _JournalPageState extends State<JournalPage> {
     }
   }
 
-  Widget lastFiveList() {
-    return StreamBuilder(
-        stream: LogService().getLastFiveLogs(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          return snapshot.hasData && snapshot.data.docs.length > 0
-              ? ListView.builder(
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    var entry = Log.fromMap(snapshot.data.docs[index].data());
-                    return ListTile(
-                      title: Text(entry.getTitle()),
-                      subtitle: Text(truncate(entry.content)),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          LogService().deleteLog(entry.id);
-                        },
-                      ),
-                    );
-                  },
-                )
-              : Center(
-                  child: Text("No Logs found"),
-                );
-        });
+  void initState() {
+    super.initState();
+    initializeDateFormatting();
+  }
+
+  Widget noteCard(Log log) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: ListTile(
+        title: Text(truncate(log.title)),
+        subtitle: Text(truncate(log.content)),
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: Text(log.title),
+                    content: Text(log.content),
+                    actions: [
+                      TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text("OK"))
+                    ],
+                  ));
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Journal"),
-        ),
-        body: Container(
-            child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Color.fromARGB(255, 81, 81, 81),
-                ),
-                height: 300,
-                child: TextField(
-                  controller: logController,
-                  textAlign: TextAlign.start,
-                  textAlignVertical: TextAlignVertical.top,
-                  maxLines: null,
-                  minLines: null,
-                  expands: true,
-                  style: TextStyle(fontSize: 20),
-                  decoration: InputDecoration(
-                    hintText: "What's on your mind?",
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                  onPressed: () async {
-                    var timeCreated = DateTime.now();
-                    var title = DateFormat('dd MM yyyy').format(timeCreated);
-                    var id = title.hashCode ^
-                        timeCreated.hashCode ^
-                        logController.text.hashCode;
+      appBar: AppBar(
+        title: Text("Journal"),
+      ),
+      body: FutureBuilder<Object>(
+          future: LogService().getLogs(),
+          builder: (context, snapshot) {
+            return Container(child: PageView.builder(
+              // PAGEVIEW STARTS HERE
+              itemBuilder: (context, index) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  logs = snapshot.data as List<Log>;
+                } else {
+                  return Container(
+                      width: 200,
+                      height: 200,
+                      child: Column(
+                        children: [
+                          Text("No data"),
+                        ],
+                      ));
+                }
+                return noteCard(logs[index]);
+              },
+            ));
+          }),
+    );
+  }
 
-                    var log = Log(
-                        id: id.toString(),
-                        title: title,
-                        content: logController.text,
-                        timeCreated: timeCreated);
+  void createNote() async {
+    var timeCreated = DateTime.now();
+    var title = DateFormat('dd MM yyyy').format(timeCreated);
+    var id =
+        title.hashCode ^ timeCreated.hashCode ^ logController.text.hashCode;
 
-                    await LogService().uploadLog(log);
+    var log = Log(
+        id: id.toString(),
+        title: title,
+        content: logController.text,
+        timeCreated: timeCreated);
 
-                    setState(() {
-                      logController.clear();
-                    });
-                  },
-                  child: Text("Submit")),
-              const SizedBox(height: 20),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Color.fromARGB(255, 57, 57, 57),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                          child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Search",
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      )),
-                      Expanded(
-                        child: lastFiveList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        )));
+    await LogService().uploadLog(log);
+
+    setState(() {
+      logController.clear();
+    });
   }
 }
