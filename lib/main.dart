@@ -4,6 +4,7 @@ import 'package:hugy/screens/dashboard.dart';
 import 'package:hugy/screens/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:yaru/yaru.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,10 +15,12 @@ Future<void> main() async {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
-      home: SplashScreen(),
-    );
+    return YaruTheme(builder: (context, yaru, child) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: yaruSageDark,
+        home: SplashScreen(),
+      );
+    });
   }
 }

@@ -1,16 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class Log {
-  final String id;
   final String title;
   final String content;
   final DateTime timeCreated;
 
   Log({
-    required this.id,
     required this.title,
     required this.content,
     required this.timeCreated,
@@ -18,16 +17,21 @@ class Log {
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
       "title": title,
       "content": content,
       "timeCreated": timeCreated,
     };
   }
 
+  factory Log.fromSnapshot(QueryDocumentSnapshot snapshot) {
+    return Log(
+        content: snapshot['content'],
+        title: snapshot['title'],
+        timeCreated: snapshot['timeCreated'].toDate());
+  }
+
   factory Log.fromMap(Map<String, dynamic> map) {
     return Log(
-        id: map['id'],
         content: map['content'],
         title: map['title'],
         timeCreated: map['timeCreated'].toDate());
@@ -55,7 +59,11 @@ class LogService {
   // function to upload a log
   Future<bool> uploadLog(Log entry) async {
     try {
-      await _firestore.collection('entries').add(entry.toMap());
+      await _firestore
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('entries')
+          .add(entry.toMap());
     } catch (e) {
       print(e);
       return false; // failed to upload log
@@ -64,9 +72,14 @@ class LogService {
     return true; //succesfully uploaded the log entry
   }
 
-  Future<bool> deleteLog(String hashCode) async {
+  Future<bool> deleteLog(String id) async {
     try {
-      await _firestore.collection('entries').doc(hashCode.toString()).delete();
+      await _firestore
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('entries')
+          .doc(id.toString())
+          .delete();
     } catch (e) {
       print(e);
       return false;
@@ -77,6 +90,8 @@ class LogService {
 
   Stream<QuerySnapshot> getLastFiveLogs() async* {
     yield* _firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('entries')
         .where('timeCreated',
             isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: 5)))
@@ -88,11 +103,33 @@ class LogService {
     return await _firestore.collection('entries').doc(id).get();
   }
 
-  Future<List<Log>> getLogs() async {
-    List<Log> logs = [];
-    await _firestore.collection('entries').get().then((value) {
+  Future<List<QueryDocumentSnapshot>> getLogs() async {
+    List<QueryDocumentSnapshot> logs = [];
+    await _firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('entries')
+        .get()
+        .then((value) {
       value.docs.forEach((element) {
-        logs.add(Log.fromMap(element.data()));
+        logs.add(element);
+      });
+    });
+
+    return logs;
+  }
+
+  Future<List<QueryDocumentSnapshot>> getLogsByDate(DateTime date) async {
+    List<QueryDocumentSnapshot> logs = [];
+    await _firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('entries')
+        .where('timeCreated', isGreaterThanOrEqualTo: date)
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        logs.add(element);
       });
     });
 
