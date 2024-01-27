@@ -157,22 +157,6 @@ class _HomeState extends State<Home> {
               Expanded(
                 child: dashPanel(),
               ),
-              SizedBox(height: 30),
-              Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.teal,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    height: 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Activities"),
-                      ],
-                    )),
-              )
             ],
           ),
         ),

@@ -20,22 +20,30 @@ class _ChatPageState extends State<ChatPage> {
     final bot_id = widget.chatId;
 
     //get response
-    await getResponse(message, behavior)
-        .then((value) => {
-              //add response to chat
-              ChatService().addMessage(
-                  bot_id,
-                  Message(
-                      content: value, isMe: false, timeSent: DateTime.now()))
-            })
-        .catchError((error) => {
-              ChatService().addMessage(
-                  bot_id,
-                  Message(
-                      content: "Sorry, Cannot reach bot",
-                      isMe: false,
-                      timeSent: DateTime.now()))
-            });
+    try {
+      await getResponse(message, behavior)
+          .then((value) => {
+                //add response to chat
+                ChatService().addMessage(
+                    bot_id,
+                    Message(
+                        content: value, isMe: false, timeSent: DateTime.now()))
+              })
+          .catchError((error) => {
+                ChatService().addMessage(
+                    bot_id,
+                    Message(
+                        content: "Sorry, Cannot reach bot",
+                        isMe: false,
+                        timeSent: DateTime.now()))
+              });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Sorry, Cannot reach bot'),
+        ),
+      );
+    }
   }
 
   Widget textBubble(Message message) {

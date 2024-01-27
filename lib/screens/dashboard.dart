@@ -1,9 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hugy/auth/firebase.dart';
 import 'package:hugy/screens/chat.dart';
 import 'package:hugy/screens/contacts.dart';
 import 'package:hugy/screens/discover.dart';
 import 'package:hugy/screens/journal.dart';
 import 'package:hugy/screens/profile.dart';
+import 'package:hugy/screens/task_page.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -62,6 +67,7 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
         key: _scaffoldKey,
         body: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.cover,
@@ -70,6 +76,44 @@ class _DashboardState extends State<Dashboard> {
           ),
           child: Column(
             children: [
+              // app bar, no back button
+              SafeArea(
+                child: AppBar(
+                  titleSpacing: 0,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  // coins
+                  leading: Container(
+                    margin: EdgeInsets.only(left: 10, top: 10),
+                    child: StreamBuilder<int>(
+                        stream: AuthService().getCoins().asStream(),
+                        builder: (context, snapshot) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Icon(Icons.star),
+                              Text(
+                                snapshot.data.toString(),
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ],
+                          );
+                        }),
+                  ),
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return TaskPage();
+                        }));
+                      },
+                      icon: Icon(Icons.add_task),
+                      iconSize: 42,
+                    )
+                  ],
+                ),
+              ),
               Expanded(
                 child: SizedBox(
                   child: PageView(
@@ -86,7 +130,7 @@ class _DashboardState extends State<Dashboard> {
                           return ContactsPage();
                         }));
                       }),
-                      _buildDoor("Discover", () {
+                      _buildDoor("Missions", () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return DiscoverPage();
