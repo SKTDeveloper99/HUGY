@@ -5,11 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class Log {
+  final String? id;
   final String title;
   final String content;
   final DateTime timeCreated;
 
   Log({
+    this.id,
     required this.title,
     required this.content,
     required this.timeCreated,
@@ -25,6 +27,7 @@ class Log {
 
   factory Log.fromSnapshot(QueryDocumentSnapshot snapshot) {
     return Log(
+        id: snapshot.id,
         content: snapshot['content'],
         title: snapshot['title'],
         timeCreated: snapshot['timeCreated'].toDate());
@@ -32,6 +35,7 @@ class Log {
 
   factory Log.fromMap(Map<String, dynamic> map) {
     return Log(
+        id: map['id'],
         content: map['content'],
         title: map['title'],
         timeCreated: map['timeCreated'].toDate());
@@ -50,6 +54,14 @@ class Log {
   @override
   // TODO: implement hashCode
   int get hashCode => title.hashCode ^ content.hashCode ^ timeCreated.hashCode;
+
+  static fromDocumentSnapshot(QueryDocumentSnapshot<Object?> log) {
+    return Log(
+        id: log.id,
+        title: log['title'],
+        content: log['content'],
+        timeCreated: log['timeCreated'].toDate());
+  }
 }
 
 class LogService {
@@ -70,6 +82,19 @@ class LogService {
     }
 
     return true; //succesfully uploaded the log entry
+  }
+
+  Future<void> updateLog(Log entry, String id) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('entries')
+          .doc(id)
+          .update(entry.toMap());
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<bool> deleteLog(String id) async {

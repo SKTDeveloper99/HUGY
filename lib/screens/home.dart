@@ -4,6 +4,7 @@ import 'package:hugy/auth/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:hugy/screens/activities/meditation_page.dart';
 import 'package:hugy/screens/contacts.dart';
+import 'package:hugy/screens/discover.dart';
 import 'package:hugy/screens/journal.dart';
 import 'package:hugy/screens/profile.dart';
 
@@ -113,6 +114,24 @@ class _HomeState extends State<Home> {
                         MaterialPageRoute(builder: (ctx) => MeditationPage()));
                   },
                   child: Text("Meditate"))
+            ],
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.green,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.chat),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (ctx) => DiscoverPage()));
+                  },
+                  child: Text("Recommendations"))
             ],
           ),
         ),

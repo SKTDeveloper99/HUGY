@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hugy/auth/firebase.dart';
 
-var endpoint = "http://10.0.2.2:5000";
+var endpoint = "https://hugy-server.onrender.com";
 
 Future<String?> getMood(String text) async {
   print("getting mood");
@@ -24,7 +26,8 @@ Future<String?> getMood(String text) async {
 
 Future<List<String>> getActivity() async {
   FirebaseFirestore fs = FirebaseFirestore.instance;
-  var collection = fs.collection("entries");
+  String userId = FirebaseAuth.instance.currentUser!.uid;
+  var collection = fs.collection("users").doc(userId).collection("entries");
 
   var query = collection.orderBy('timeCreated', descending: true).limit(1);
 
@@ -32,7 +35,6 @@ Future<List<String>> getActivity() async {
       (await query.get().then((value) => value.docs[0].data()))['content'];
 
   String? mood = await getMood(snapshot);
-  print("mood: $mood");
 
   final String response = await rootBundle.loadString('assets/activities.json');
   Map<String, dynamic> data = await jsonDecode(response);

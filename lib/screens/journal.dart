@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hugy/models/log.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +9,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 class NoteEditor extends StatefulWidget {
   NoteEditor({super.key, required this.log});
-  Log log;
+  Log? log;
 
   @override
   State<NoteEditor> createState() => _NoteEditorState();
@@ -18,21 +19,52 @@ class _NoteEditorState extends State<NoteEditor> {
   TextEditingController logController = TextEditingController();
   Timer? _debounce;
 
+  Future<void> updateLog() async {
+    FirebaseFirestore fs = FirebaseFirestore.instance;
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    await fs
+        .collection("users")
+        .doc(userId)
+        .collection("entries")
+        .doc(widget.log?.id)
+        .update({
+      "content": logController.text,
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.log != null) {
+      logController.text = widget.log!.content;
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    if (widget.log == null) {
+      if (logController.text.isNotEmpty) {
+        FirebaseFirestore.instance
+            .collection("users")
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .collection("entries")
+            .add({
+          "content": logController.text,
+          "timeCreated": DateTime.now(),
+          "title": DateFormat('dd MM yyyy').format(DateTime.now()),
+        });
+      }
+    } else {
+      updateLog();
+    }
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    logController.addListener(() {
-      if (_debounce?.isActive ?? false) _debounce?.cancel();
-      _debounce = Timer(const Duration(milliseconds: 500), () async {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Saving..."),
-        ));
-        await LogService().uploadLog(Log(
-            title: DateFormat('dd MM yyyy').format(DateTime.now()),
-            content: logController.text,
-            timeCreated: DateTime.now()));
-      });
-    });
     return Scaffold(
       appBar: AppBar(
         title: Text("Create a log"),
@@ -77,7 +109,7 @@ class _JournalPageState extends State<JournalPage> {
     pageController = PageController(initialPage: 0, viewportFraction: 0.8);
   }
 
-  Widget noteCard(Log log, String id) {
+  Widget noteCard(Log log) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: InkWell(
@@ -119,7 +151,7 @@ class _JournalPageState extends State<JournalPage> {
                     IconButton(
                       icon: Icon(Icons.delete_outline),
                       onPressed: () async {
-                        await LogService().deleteLog(id);
+                        await LogService().deleteLog(log.id!);
                         setState(() {});
                       },
                     )
@@ -134,7 +166,7 @@ class _JournalPageState extends State<JournalPage> {
     );
   }
 
-  Widget carouselView(List<QueryDocumentSnapshot> logs, int index) {
+  Widget carouselView(List<Log> logs, int index) {
     return AnimatedBuilder(
       animation: pageController,
       builder: (context, child) {
@@ -146,8 +178,7 @@ class _JournalPageState extends State<JournalPage> {
         return Center(
           child: Transform.rotate(
             angle: rotAmount,
-            child: noteCard(Log.fromSnapshot(logs[index % logs.length]),
-                logs[index % logs.length].id),
+            child: noteCard(logs[index % logs.length]),
           ),
         );
       },
@@ -163,15 +194,11 @@ class _JournalPageState extends State<JournalPage> {
           backgroundColor:
               Theme.of(context).floatingActionButtonTheme.backgroundColor,
           onPressed: () {
-            var log = Log(
-                title: DateFormat('dd MM yyyy').format(DateTime.now()),
-                content: "",
-                timeCreated: DateTime.now());
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => NoteEditor(
-                          log: log,
+                          log: null,
                         )));
           }),
       appBar: AppBar(
@@ -219,7 +246,10 @@ class _JournalPageState extends State<JournalPage> {
                           if (snapshot.hasData &&
                               snapshot.data != null &&
                               snapshot.data?.isNotEmpty == true) {
-                            return carouselView(snapshot.data!, index);
+                            List logs = snapshot.data!
+                                .map((e) => Log.fromDocumentSnapshot(e))
+                                .toList();
+                            return carouselView(logs.cast<Log>(), index);
                           } else {
                             return Container(
                               width: 200,
@@ -238,7 +268,7 @@ class _JournalPageState extends State<JournalPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => NoteEditor(
-                                                    log: log,
+                                                    log: null,
                                                   )));
                                     },
                                     child: Text("Create a log"),
