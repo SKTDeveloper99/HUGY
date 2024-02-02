@@ -30,7 +30,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Your Recommendations"),
+        title: const Text("Your Recommendations"),
       ),
       body: Container(
           child: FutureBuilder<List<String>>(
@@ -47,7 +47,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                 title: snapshot.data![index], completed: false);
                             addToTasks(task);
                           },
-                          contentPadding: EdgeInsets.all(10),
+                          contentPadding: const EdgeInsets.all(10),
                           title: Text(snapshot.data![index]),
                         ),
                       );

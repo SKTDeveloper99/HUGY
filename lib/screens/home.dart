@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:hugy/auth/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:hugy/screens/activities/meditation_page.dart';
@@ -28,21 +27,21 @@ class _HomeState extends State<Home> {
     return InkWell(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (ctx) => ProfilePage()));
+            context, MaterialPageRoute(builder: (ctx) => const ProfilePage()));
       },
-      child: Container(
+      child: SizedBox(
         height: 30,
         child: Row(
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               radius: 15,
               backgroundImage: NetworkImage(
                   "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Text(FirebaseAuth.instance.currentUser!.email!),
-            Spacer(),
-            Icon(
+            const Spacer(),
+            const Icon(
               Icons.money,
               color: Colors.yellow,
             ),
@@ -56,8 +55,8 @@ class _HomeState extends State<Home> {
   Widget dashPanel() {
     return GridView(
       shrinkWrap: true,
-      padding: EdgeInsets.all(20),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      padding: const EdgeInsets.all(20),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         crossAxisCount: 2,
@@ -71,13 +70,13 @@ class _HomeState extends State<Home> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.chat),
+              const Icon(Icons.chat),
               TextButton(
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (ctx) => ContactsPage()));
+                        MaterialPageRoute(builder: (ctx) => const ContactsPage()));
                   },
-                  child: Text("Chat with AI"))
+                  child: const Text("Chat with AI"))
             ],
           ),
         ),
@@ -89,13 +88,13 @@ class _HomeState extends State<Home> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.book),
+              const Icon(Icons.book),
               TextButton(
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (ctx) => JournalPage()));
+                        MaterialPageRoute(builder: (ctx) => const JournalPage()));
                   },
-                  child: Text("Add new journal entry"))
+                  child: const Text("Add new journal entry"))
             ],
           ),
         ),
@@ -107,13 +106,13 @@ class _HomeState extends State<Home> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.chat),
+              const Icon(Icons.chat),
               TextButton(
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (ctx) => MeditationPage()));
+                        MaterialPageRoute(builder: (ctx) => const MeditationPage()));
                   },
-                  child: Text("Meditate"))
+                  child: const Text("Meditate"))
             ],
           ),
         ),
@@ -125,13 +124,13 @@ class _HomeState extends State<Home> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.chat),
+              const Icon(Icons.chat),
               TextButton(
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (ctx) => DiscoverPage()));
+                        MaterialPageRoute(builder: (ctx) => const DiscoverPage()));
                   },
-                  child: Text("Recommendations"))
+                  child: const Text("Recommendations"))
             ],
           ),
         ),
@@ -153,7 +152,7 @@ class _HomeState extends State<Home> {
           child: Column(
             children: [
               userPanel(),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Expanded(
                 child: dashPanel(),
               ),

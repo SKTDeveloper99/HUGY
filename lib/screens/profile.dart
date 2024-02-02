@@ -19,13 +19,13 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Profile"),
+        title: const Text("My Profile"),
         centerTitle: true,
       ),
       body: ListView(
         children: [
           ListTile(
-            leading: Text("Profile photo"),
+            leading: const Text("Profile photo"),
             trailing: InkWell(
               onTapUp: (details) async {
                 FilePickerResult? image = await FilePicker.platform
@@ -35,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   File file = File(image.files.first.path!);
                   Uint8List bytes = file.readAsBytesSync();
                   String fileName =
-                      FirebaseAuth.instance.currentUser!.email! + '.jpg';
+                      '${FirebaseAuth.instance.currentUser!.email!}.jpg';
                   await FirebaseStorage.instance
                       .ref('profiles/$fileName')
                       .putData(bytes);
@@ -63,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           ListTile(
-            leading: Text("Name"),
+            leading: const Text("Name"),
             trailing: SizedBox(
               width: 200,
               child: TextField(
@@ -78,15 +78,15 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           ListTile(
-            leading: Text("Email"),
+            leading: const Text("Email"),
             trailing: Text(FirebaseAuth.instance.currentUser!.email!),
           ),
           const SizedBox(
             height: 20,
           ),
           ListTile(
-            leading: Text("Logout"),
-            trailing: Icon(Icons.logout),
+            leading: const Text("Logout"),
+            trailing: const Icon(Icons.logout),
             onTap: () async {
               await FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(MaterialPageRoute(

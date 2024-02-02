@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                         });
                       } else {
                         Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (ctx) => AuthGate()));
+                            MaterialPageRoute(builder: (ctx) => const AuthGate()));
                       }
                     });
                     // FINISHED ADDING NEW FEATURE
@@ -62,9 +62,9 @@ class _LoginPageState extends State<LoginPage> {
               TextButton(
                   onPressed: () {
                     Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (_) => Registration()));
+                        MaterialPageRoute(builder: (_) => const Registration()));
                   },
-                  child: Text("Create an account instead")),
+                  child: const Text("Create an account instead")),
             ],
           ),
         ));
@@ -90,12 +90,12 @@ class _RegistrationState extends State<Registration> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Create Account"),
+          title: const Text("Create Account"),
           centerTitle: true,
           leading: null,
         ),
         body: Padding(
-          padding: EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(30.0),
           child: Form(
               key: _formKey,
               child: Column(
@@ -108,14 +108,14 @@ class _RegistrationState extends State<Registration> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Email",
                       border: OutlineInputBorder(),
                       hintText: "Enter your email",
                     ),
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     controller: _passwordController,
                     validator: (value) {
@@ -129,14 +129,14 @@ class _RegistrationState extends State<Registration> {
                       return null;
                     },
                     obscureText: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Password",
                       border: OutlineInputBorder(),
                       hintText: "Enter your password",
                     ),
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   TextFormField(
                     controller: _confirmPasswordController,
@@ -147,7 +147,7 @@ class _RegistrationState extends State<Registration> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Confirm Password",
                       border: OutlineInputBorder(),
                       hintText: "Confirm your password",
@@ -169,27 +169,27 @@ class _RegistrationState extends State<Registration> {
                             }
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(builder: (context) {
-                              return SplashScreen();
+                              return const SplashScreen();
                             }));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text("Failed to create account"),
                               ),
                             );
                           }
                         }
                       },
-                      child: Text("Create Account")),
+                      child: const Text("Create Account")),
                   //
                   TextButton(
                       onPressed: () {
                         Navigator.of(context).pushReplacement(
                             MaterialPageRoute(builder: (context) {
-                          return LoginPage();
+                          return const LoginPage();
                         }));
                       },
-                      child: Text("Login instead")),
+                      child: const Text("Login instead")),
                 ],
               )),
         ));

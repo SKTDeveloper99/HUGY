@@ -21,7 +21,7 @@ class _TaskPageState extends State<TaskPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Tasks"),
+        title: const Text("My Tasks"),
         centerTitle: true,
       ),
       body: StreamBuilder(
@@ -91,7 +91,7 @@ class _TaskPageState extends State<TaskPage> {
                               .get()
                               .asStream();
                         },
-                        contentPadding: EdgeInsets.all(10),
+                        contentPadding: const EdgeInsets.all(10),
                         title: Text(snapshot.data!.docs[index]['title']),
                         trailing: Checkbox(
                           value: snapshot.data!.docs[index]['completed'],

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hugy/auth/gpt.dart';
@@ -14,24 +13,24 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  TextEditingController _messageController = TextEditingController();
+  final TextEditingController _messageController = TextEditingController();
 
   Future<void> getBotResponse(String message, String behavior) async {
-    final bot_id = widget.chatId;
+    final botId = widget.chatId;
 
     //get response
     try {
-      await getResponse(message, behavior)
+      await getResponse(message, behavior, botId)
           .then((value) => {
                 //add response to chat
                 ChatService().addMessage(
-                    bot_id,
+                    botId,
                     Message(
                         content: value, isMe: false, timeSent: DateTime.now()))
               })
           .catchError((error) => {
                 ChatService().addMessage(
-                    bot_id,
+                    botId,
                     Message(
                         content: "Sorry, Cannot reach bot",
                         isMe: false,
@@ -39,7 +38,7 @@ class _ChatPageState extends State<ChatPage> {
               });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Sorry, Cannot reach bot'),
         ),
       );
@@ -102,7 +101,7 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: TextField(
                       controller: _messageController,
                       onSubmitted: (value) async {
@@ -122,8 +121,8 @@ class _ChatPageState extends State<ChatPage> {
                           _messageController.clear();
                         }); // we will use streams later
                       },
-                      style: TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
+                      style: const TextStyle(color: Colors.black),
+                      decoration: const InputDecoration(
                         border: InputBorder.none,
                       ),
                     ),
@@ -132,7 +131,7 @@ class _ChatPageState extends State<ChatPage> {
               ),
             );
           } else {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
         });
   }

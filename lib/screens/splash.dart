@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hugy/screens/dashboard.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hugy/screens/registration.dart';
-import 'package:hugy/screens/home.dart';
 
 import 'dart:math';
 
 class TwinkleLittleStar extends StatelessWidget {
+  const TwinkleLittleStar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 1.0,
       height: 1.0,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
       ),
@@ -22,7 +22,7 @@ class TwinkleLittleStar extends StatelessWidget {
 }
 
 class Space extends StatefulWidget {
-  Space({required this.opacity});
+  const Space({super.key, required this.opacity});
 
   final Animation<double> opacity;
 
@@ -50,7 +50,7 @@ class _SpaceState extends State<Space> {
       return Positioned(
         top: xy[0],
         left: xy[1],
-        child: TwinkleLittleStar(),
+        child: const TwinkleLittleStar(),
       );
     });
   }
@@ -90,7 +90,7 @@ class IntroTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
+    return const Text(
       "HUGY...",
       style: TextStyle(
         color: Color.fromARGB(255, 241, 190, 19),
@@ -101,8 +101,8 @@ class IntroTitle extends StatelessWidget {
 }
 
 class CrawlingText extends StatelessWidget {
-  CrawlingText(
-      {required this.topMargin,
+  const CrawlingText(
+      {super.key, required this.topMargin,
       required this.bottomMargin,
       required this.opacity});
 
@@ -111,7 +111,7 @@ class CrawlingText extends StatelessWidget {
   final Animation<double> bottomMargin;
   final Animation<double> opacity;
 
-  final TextStyle _crawlingTextStyle = TextStyle(
+  final TextStyle _crawlingTextStyle = const TextStyle(
     color: Color(0xFFFFC500),
     fontSize: 40.0,
     fontWeight: FontWeight.bold,
@@ -141,7 +141,7 @@ class CrawlingText extends StatelessWidget {
                       ? MediaQuery.of(context).size.width
                       : maxWidthConstraint,
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 64.0),
+                padding: const EdgeInsets.symmetric(horizontal: 64.0),
                 child: Column(
                   children: [
                     Text(
@@ -149,7 +149,7 @@ class CrawlingText extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: _crawlingTextStyle,
                     ),
-                    IntroTitle(),
+                    const IntroTitle(),
                   ],
                 ),
               ),
@@ -182,11 +182,11 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
 
-    Future.delayed(Duration(seconds: 0), () {
+    Future.delayed(const Duration(seconds: 0), () {
       setState(() {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (BuildContext context) {
-          return AuthGate();
+          return const AuthGate();
         }));
       });
     });
@@ -196,10 +196,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.black,
         ),
-        child: Center(
+        child: const Center(
           child: IntroTitle(),
         ),
       ),
@@ -208,15 +208,17 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext, AsyncSnapshot<User?> snapshot) {
           if (snapshot.hasData) {
-            return Dashboard();
+            return const Dashboard();
           } else {
-            return Registration();
+            return const Registration();
           }
         });
   }

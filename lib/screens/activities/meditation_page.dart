@@ -41,12 +41,12 @@ class _MeditationPageState extends State<MeditationPage> {
         showDialog(
             context: context,
             builder: (context) => AlertDialog(
-                  title: Text("Meditation Complete!"),
-                  content: Text("You have earned 100 coins!"),
+                  title: const Text("Meditation Complete!"),
+                  content: const Text("You have earned 100 coins!"),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: Text("OK"))
+                        child: const Text("OK"))
                   ],
                 ));
       }
@@ -83,7 +83,7 @@ class _MeditationPageState extends State<MeditationPage> {
           Center(
             child: Text(
               "${twoDigits(duration.inHours.remainder(24))}:${twoDigits(duration.inMinutes.remainder(60))}:${twoDigits(duration.inSeconds.remainder(60))}",
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24),
             ),
           ),
         ]));
@@ -100,7 +100,7 @@ class _MeditationPageState extends State<MeditationPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   buildClock(),
-                  SizedBox(height: 80),
+                  const SizedBox(height: 80),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -108,14 +108,14 @@ class _MeditationPageState extends State<MeditationPage> {
                           onPressed: () async {
                             setState(() => startTimer());
                           },
-                          child: Text("Start")),
+                          child: const Text("Start")),
                       ElevatedButton(
                         onPressed: () => stopTimer(),
-                        child: Text("Stop"),
+                        child: const Text("Stop"),
                       ),
                       ElevatedButton(
                         onPressed: () => resetTimer(),
-                        child: Text("Reset"),
+                        child: const Text("Reset"),
                       ),
                     ],
                   ),

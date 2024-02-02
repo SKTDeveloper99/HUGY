@@ -67,13 +67,13 @@ class _NoteEditorState extends State<NoteEditor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create a log"),
+        title: const Text("Create a log"),
       ),
       body: Container(
         child: TextField(
           controller: logController,
           maxLines: 100,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: "Write your log here",
             border: OutlineInputBorder(),
           ),
@@ -103,6 +103,7 @@ class _JournalPageState extends State<JournalPage> {
     }
   }
 
+  @override
   void initState() {
     super.initState();
     initializeDateFormatting();
@@ -125,7 +126,7 @@ class _JournalPageState extends State<JournalPage> {
             width: 400,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(32),
-              image: DecorationImage(
+              image: const DecorationImage(
                   opacity: 0.8,
                   image: AssetImage("assets/circles.png"),
                   fit: BoxFit.cover),
@@ -137,7 +138,7 @@ class _JournalPageState extends State<JournalPage> {
                 ),
               ],
             ),
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Column(
               children: [
                 Row(
@@ -146,10 +147,10 @@ class _JournalPageState extends State<JournalPage> {
                     Text(
                       log.title,
                       style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete_outline),
+                      icon: const Icon(Icons.delete_outline),
                       onPressed: () async {
                         await LogService().deleteLog(log.id!);
                         setState(() {});
@@ -159,7 +160,7 @@ class _JournalPageState extends State<JournalPage> {
                 ),
                 Text(truncate(log.content),
                     style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
+                        const TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
               ],
             )),
       ),
@@ -190,7 +191,6 @@ class _JournalPageState extends State<JournalPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add_outlined),
           backgroundColor:
               Theme.of(context).floatingActionButtonTheme.backgroundColor,
           onPressed: () {
@@ -200,9 +200,10 @@ class _JournalPageState extends State<JournalPage> {
                     builder: (context) => NoteEditor(
                           log: null,
                         )));
-          }),
+          },
+          child: const Icon(Icons.add_outlined)),
       appBar: AppBar(
-        title: Text("Journal"),
+        title: const Text("Journal"),
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_month_outlined),
@@ -234,13 +235,13 @@ class _JournalPageState extends State<JournalPage> {
                     Text(
                       DateFormat('dd MMMM yyyy').format(selectedDate),
                       style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     Expanded(
                       child: Container(
                           child: PageView.builder(
                         controller: pageController,
-                        physics: ClampingScrollPhysics(),
+                        physics: const ClampingScrollPhysics(),
                         // PAGEVIEW STARTS HERE
                         itemBuilder: (context, index) {
                           if (snapshot.hasData &&
@@ -251,12 +252,12 @@ class _JournalPageState extends State<JournalPage> {
                                 .toList();
                             return carouselView(logs.cast<Log>(), index);
                           } else {
-                            return Container(
+                            return SizedBox(
                               width: 200,
                               height: 200,
                               child: Column(
                                 children: [
-                                  Text("No logs found"),
+                                  const Text("No logs found"),
                                   TextButton(
                                     onPressed: () {
                                       var log = Log(
@@ -271,7 +272,7 @@ class _JournalPageState extends State<JournalPage> {
                                                     log: null,
                                                   )));
                                     },
-                                    child: Text("Create a log"),
+                                    child: const Text("Create a log"),
                                   )
                                 ],
                               ),

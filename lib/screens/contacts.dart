@@ -23,6 +23,12 @@ List<Map<String, dynamic>> chatBots = [
     "description": "Humurous and helpful bot",
     "behavior":
         " Witty and Humorous: This character has a witty and humorous personality, using humor to relieve stress and confusion. They can offer lighthearted conversations and suggestions to help users relax in a fun atmosphere."
+  },
+  {
+    "name": "April",
+    "description": "Philosopher",
+    "behavior":
+        "AI can provide (methods and steps for thinking through issues), help users (analyze and evaluate different perspectives and values of life), as well as guide users to (deepen their thinking) about the meaning and value of life through (philosophical exercises and reflections)."
   }
 ];
 
@@ -34,13 +40,13 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   Stream loadChats() {
-    final user_id = FirebaseAuth.instance.currentUser!.uid;
+    final userId = FirebaseAuth.instance.currentUser!.uid;
     return FirebaseFirestore.instance
         .collection('chats')
-        .where('owner', isEqualTo: user_id)
+        .where('owner', isEqualTo: userId)
         .snapshots();
   }
 
@@ -49,12 +55,11 @@ class _ContactsPageState extends State<ContactsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Contacts"),
+        title: const Text("Contacts"),
         actions: [
           IconButton(
             onPressed: () {
-              TextEditingController _botNameController =
-                  TextEditingController();
+              TextEditingController botNameController = TextEditingController();
               // display dialog to add new bot
               /* showDialog(
                   context: context,
@@ -98,14 +103,14 @@ class _ContactsPageState extends State<ContactsPage> {
                           title: Text(chatBots[index]["name"]),
                           subtitle: Text(chatBots[index]["description"]),
                           onTap: () async {
-                            final user_id =
+                            final userId =
                                 FirebaseAuth.instance.currentUser!.uid;
                             Chat chat = Chat(
                                 chatName: chatBots[index]["name"],
-                                id: (user_id.hashCode + Random().nextInt(100))
+                                id: (userId.hashCode + Random().nextInt(100))
                                     .toString(),
                                 messages: [],
-                                owner: user_id,
+                                owner: userId,
                                 behavior: chatBots[index]["behavior"]);
                             await ChatService().createNewChat(chat);
                             Navigator.of(context).pop();
@@ -116,7 +121,7 @@ class _ContactsPageState extends State<ContactsPage> {
                     );
                   });
             },
-            icon: Icon(Icons.person_add),
+            icon: const Icon(Icons.person_add),
           ),
         ],
       ),
@@ -133,7 +138,7 @@ class _ContactsPageState extends State<ContactsPage> {
               stream: loadChats(),
               builder: (ctx, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
 
                 final chatDocs = snapshot.data.docs;
@@ -142,16 +147,47 @@ class _ContactsPageState extends State<ContactsPage> {
                   child: ListView.builder(
                     itemCount: chatDocs.length,
                     itemBuilder: (ctx, index) {
-                      return ListTile(
-                        onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (BuildContext ctx) {
-                            return ChatPage(
-                              chatId: chatDocs[index]['id'],
-                            );
-                          }));
+                      return Dismissible(
+                        confirmDismiss: (direction) {
+                          return showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("Delete Chat"),
+                                  content: const Text(
+                                      "Are you sure you want to delete this chat?"),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(false);
+                                        },
+                                        child: const Text("No")),
+                                    TextButton(
+                                        onPressed: () async {
+                                          await ChatService().deleteChat(
+                                              chatDocs[index]['id']);
+
+                                          if (!mounted) return;
+                                          Navigator.of(context).pop(true);
+                                        },
+                                        child: const Text("Yes")),
+                                  ],
+                                );
+                              });
                         },
-                        title: Text(chatDocs[index]['chatName']),
+                        direction: DismissDirection.endToStart,
+                        key: ValueKey(chatDocs[index]['id']),
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (BuildContext ctx) {
+                              return ChatPage(
+                                chatId: chatDocs[index]['id'],
+                              );
+                            }));
+                          },
+                          title: Text(chatDocs[index]['chatName']),
+                        ),
                       );
                     },
                   ),

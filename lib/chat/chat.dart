@@ -80,6 +80,10 @@ class ChatService {
     return true; //successful
   }
 
+  Future<void> deleteChat(String chatId) async {
+    await _firestore.collection('chats').doc(chatId).delete();
+  }
+
   Future<bool> addMessage(String chatId, Message message) async {
     try {
       await _firestore.doc('chats/$chatId').update({

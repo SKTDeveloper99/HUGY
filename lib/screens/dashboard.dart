@@ -1,12 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hugy/auth/firebase.dart';
-import 'package:hugy/screens/chat.dart';
 import 'package:hugy/screens/contacts.dart';
 import 'package:hugy/screens/discover.dart';
 import 'package:hugy/screens/journal.dart';
+import 'package:hugy/screens/life_timer.dart';
 import 'package:hugy/screens/profile.dart';
 import 'package:hugy/screens/task_page.dart';
 
@@ -21,7 +19,6 @@ class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late PageController _pageController;
   int currentDoor = 0;
-
   @override
   void initState() {
     // TODO: implement initState
@@ -31,7 +28,7 @@ class _DashboardState extends State<Dashboard> {
 
   String getTime() {
     var now = DateTime.now();
-    return now.hour.toString() + ":" + now.minute.toString();
+    return "${now.hour}:${now.minute}";
   }
 
   Widget _buildDoor(String doorName, VoidCallback onTap) {
@@ -43,9 +40,9 @@ class _DashboardState extends State<Dashboard> {
           child: AnimatedContainer(
             height: 300,
             width: 171,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.ease,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.fitHeight,
                 image: AssetImage("assets/backgrounds/pixel_door.jpg"),
@@ -55,7 +52,7 @@ class _DashboardState extends State<Dashboard> {
         ),
         Text(
           doorName,
-          style: TextStyle(fontSize: 30),
+          style: const TextStyle(fontSize: 30),
         ),
       ],
     );
@@ -63,18 +60,74 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    Widget buildDots() {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              _pageController.animateToPage((currentDoor - 1) % 5,
+                  duration: Duration(milliseconds: 500), curve: Curves.linear);
+            },
+          ),
+          SizedBox(
+            height: 50,
+            width: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return AnimatedContainer(
+                  padding: const EdgeInsets.all(5),
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.ease,
+                  width: index == currentDoor ? 30 : 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: Container(
+                    width: 4,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: index == currentDoor
+                          ? Colors.blue
+                          : Colors.blue.withOpacity(0.5),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            onPressed: () {
+              _pageController.animateToPage((currentDoor + 1) % 5,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linear);
+            },
+          )
+        ],
+      );
+    }
+
     // scaffold widget
     return Scaffold(
         key: _scaffoldKey,
         body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: const BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.cover,
               image: AssetImage("assets/backgrounds/sky2.jpg"),
             ),
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // app bar, no back button
               SafeArea(
@@ -84,17 +137,17 @@ class _DashboardState extends State<Dashboard> {
                   elevation: 0,
                   // coins
                   leading: Container(
-                    margin: EdgeInsets.only(left: 10, top: 10),
+                    margin: const EdgeInsets.only(left: 10, top: 10),
                     child: StreamBuilder<int>(
                         stream: AuthService().getCoins().asStream(),
                         builder: (context, snapshot) {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              Icon(Icons.star),
+                              const Icon(Icons.star),
                               Text(
                                 snapshot.data.toString(),
-                                style: TextStyle(fontSize: 20),
+                                style: const TextStyle(fontSize: 20),
                               ),
                             ],
                           );
@@ -105,15 +158,16 @@ class _DashboardState extends State<Dashboard> {
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return TaskPage();
+                          return const TaskPage();
                         }));
                       },
-                      icon: Icon(Icons.add_task),
+                      icon: const Icon(Icons.add_task),
                       iconSize: 42,
                     )
                   ],
                 ),
               ),
+
               Expanded(
                 child: SizedBox(
                   child: PageView(
@@ -127,31 +181,38 @@ class _DashboardState extends State<Dashboard> {
                       _buildDoor("Contacts", () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return ContactsPage();
+                          return const ContactsPage();
                         }));
                       }),
                       _buildDoor("Missions", () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return DiscoverPage();
+                          return const DiscoverPage();
                         }));
                       }),
                       _buildDoor("Me", () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return ProfilePage();
+                          return const ProfilePage();
                         }));
                       }),
                       _buildDoor("Journal", () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return JournalPage();
+                          return const JournalPage();
+                        }));
+                      }),
+                      _buildDoor("Life Timer", () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return const LifeTimer();
                         }));
                       })
                     ],
                   ),
                 ),
               ),
+              Padding(padding: EdgeInsets.only(bottom: 20), child: buildDots()),
             ],
           ),
         ));

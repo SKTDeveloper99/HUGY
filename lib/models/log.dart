@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 class Log {
   final String? id;
@@ -42,7 +40,7 @@ class Log {
   }
 
   String getTitle() {
-    if (DateTime.tryParse(this.title) == null) {
+    if (DateTime.tryParse(title) == null) {
       // our title is not a datetime anymore
       return title;
     } else {
@@ -65,7 +63,7 @@ class Log {
 }
 
 class LogService {
-  FirebaseFirestore _firestore =
+  final FirebaseFirestore _firestore =
       FirebaseFirestore.instance; // Creater a new firestore connection
 
   // function to upload a log
@@ -119,7 +117,7 @@ class LogService {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('entries')
         .where('timeCreated',
-            isGreaterThanOrEqualTo: DateTime.now().subtract(Duration(days: 5)))
+            isGreaterThanOrEqualTo: DateTime.now().subtract(const Duration(days: 5)))
         .get()
         .asStream();
   }
@@ -136,9 +134,9 @@ class LogService {
         .collection('entries')
         .get()
         .then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         logs.add(element);
-      });
+      }
     });
 
     return logs;
@@ -153,9 +151,9 @@ class LogService {
         .where('timeCreated', isGreaterThanOrEqualTo: date)
         .get()
         .then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         logs.add(element);
-      });
+      }
     });
 
     return logs;
