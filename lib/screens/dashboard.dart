@@ -35,24 +35,28 @@ class _DashboardState extends State<Dashboard> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        InkWell(
-          onTap: onTap,
-          child: AnimatedContainer(
-            height: 300,
-            width: 171,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.ease,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.fitHeight,
-                image: AssetImage("assets/backgrounds/pixel_door.jpg"),
+        Expanded(
+          child: InkWell(
+            onTap: onTap,
+            child: AnimatedContainer(
+              height: 300,
+              width: 171,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.ease,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.fitHeight,
+                  image: AssetImage("assets/backgrounds/pixel_door.jpg"),
+                ),
               ),
             ),
           ),
         ),
-        Text(
-          doorName,
-          style: const TextStyle(fontSize: 30),
+        Expanded(
+          child: Text(
+            doorName,
+            style: const TextStyle(fontSize: 30),
+          ),
         ),
       ],
     );
@@ -129,45 +133,45 @@ class _DashboardState extends State<Dashboard> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // app bar, no back button
-              SafeArea(
-                child: AppBar(
-                  titleSpacing: 0,
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  // coins
-                  leading: Container(
-                    margin: const EdgeInsets.only(left: 10, top: 10),
-                    child: StreamBuilder<int>(
-                        stream: AuthService().getCoins().asStream(),
-                        builder: (context, snapshot) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              const Icon(Icons.star),
-                              Text(
-                                snapshot.data.toString(),
-                                style: const TextStyle(fontSize: 20),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 10, top: 10),
+                  child: StreamBuilder<int>(
+                      stream: AuthService().getCoins().asStream(),
+                      builder: (context, snapshot) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Icon(
+                              Icons.money,
+                              color: Colors.yellow,
+                              size: 60,
+                            ),
+                            Text(
+                              snapshot.data.toString() + ' coins',
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Roboto'),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.checklist,
+                                size: 60,
                               ),
-                            ],
-                          );
-                        }),
-                  ),
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const TaskPage();
-                        }));
-                      },
-                      icon: const Icon(Icons.add_task),
-                      iconSize: 42,
-                    )
-                  ],
+                              onPressed: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return const TaskPage();
+                                }));
+                              },
+                            ),
+                          ],
+                        );
+                      }),
                 ),
               ),
-
               Expanded(
                 child: SizedBox(
                   child: PageView(
