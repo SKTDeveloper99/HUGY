@@ -31,7 +31,8 @@ class _DashboardState extends State<Dashboard> {
     return "${now.hour}:${now.minute}";
   }
 
-  Widget _buildDoor(String doorName, VoidCallback onTap) {
+  Widget _buildDoor(String doorName, VoidCallback onTap,
+      {required IconData icon}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -40,14 +41,19 @@ class _DashboardState extends State<Dashboard> {
             onTap: onTap,
             child: AnimatedContainer(
               height: 300,
-              width: 171,
+              width: 130,
               duration: const Duration(milliseconds: 500),
               curve: Curves.ease,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
                 image: DecorationImage(
                   fit: BoxFit.fitHeight,
                   image: AssetImage("assets/backgrounds/pixel_door.jpg"),
                 ),
+              ),
+              child: Icon(
+                icon,
+                size: 64,
               ),
             ),
           ),
@@ -182,36 +188,60 @@ class _DashboardState extends State<Dashboard> {
                       });
                     },
                     children: [
-                      _buildDoor("Contacts", () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const ContactsPage();
-                        }));
-                      }),
-                      _buildDoor("Missions", () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const DiscoverPage();
-                        }));
-                      }),
-                      _buildDoor("Me", () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const ProfilePage();
-                        }));
-                      }),
+                      _buildDoor(
+                        "Contacts",
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const ContactsPage();
+                              },
+                            ),
+                          );
+                        },
+                        icon: Icons.contacts,
+                      ),
+                      _buildDoor(
+                        "Missions",
+                        () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const DiscoverPage();
+                          }));
+                        },
+                        icon: Icons.explore,
+                      ),
+                      _buildDoor(
+                        "Me",
+                        () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const ProfilePage();
+                          }));
+                        },
+                        icon: Icons.person,
+                      ),
                       _buildDoor("Journal", () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return const JournalPage();
                         }));
-                      }),
-                      _buildDoor("Life Timer", () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const LifeTimer();
-                        }));
-                      })
+                      }, icon: Icons.book_outlined),
+                      _buildDoor(
+                        "Life Timer",
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const LifeTimer();
+                              },
+                            ),
+                          );
+                        },
+                        icon: Icons.timer,
+                      )
                     ],
                   ),
                 ),

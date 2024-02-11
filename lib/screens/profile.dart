@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -83,6 +84,35 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(
             height: 20,
+          ),
+          ListTile(
+            leading: Text("Birthday"),
+            trailing: ElevatedButton(
+              onPressed: () async {
+                var birthday = await showDatePicker(
+                    context: context,
+                    firstDate: DateTime(1970),
+                    initialDate: DateTime.now(),
+                    lastDate: DateTime.now());
+
+                if (birthday != null) {
+                  var id = FirebaseAuth.instance.currentUser!.uid;
+                  await FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(id)
+                      .update({"birthday": birthday});
+
+                  if (!mounted) return;
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Birthday updated"),
+                    ),
+                  );
+                }
+              },
+              child: const Text("Set Birthday"),
+            ),
           ),
           ListTile(
             leading: const Text("Logout"),

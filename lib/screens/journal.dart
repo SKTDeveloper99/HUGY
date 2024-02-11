@@ -93,7 +93,8 @@ class JournalPage extends StatefulWidget {
 class _JournalPageState extends State<JournalPage> {
   PageController pageController = PageController();
 
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime(DateTime.now().year, DateTime.now().month,
+      DateTime.now().day); // default to today
 
   String truncate(String data) {
     if (data.length > 27) {
@@ -145,9 +146,10 @@ class _JournalPageState extends State<JournalPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      log.title,
-                      style:
-                          const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      // time created in neat format
+                      DateFormat('h:mm:a').format(log.timeCreated),
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete_outline),
@@ -159,8 +161,8 @@ class _JournalPageState extends State<JournalPage> {
                   ],
                 ),
                 Text(truncate(log.content),
-                    style:
-                        const TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w300)),
               ],
             )),
       ),
@@ -225,8 +227,9 @@ class _JournalPageState extends State<JournalPage> {
         ],
       ),
       body: Center(
-        child: FutureBuilder<List<QueryDocumentSnapshot>>(
-            future: LogService().getLogsByDate(selectedDate),
+        child: StreamBuilder<List<QueryDocumentSnapshot>>(
+            stream: LogService().getLogsByDate(selectedDate),
+            initialData: [],
             builder: (context, snapshot) {
               return AspectRatio(
                 aspectRatio: 0.8,
@@ -234,8 +237,8 @@ class _JournalPageState extends State<JournalPage> {
                   children: [
                     Text(
                       DateFormat('dd MMMM yyyy').format(selectedDate),
-                      style:
-                          const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     Expanded(
                       child: Container(

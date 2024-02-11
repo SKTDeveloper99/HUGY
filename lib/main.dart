@@ -19,7 +19,7 @@ class App extends StatelessWidget {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: yaruSageDark,
-        home: const SplashScreen(),
+        home: const AuthGate(),
       );
     });
   }
