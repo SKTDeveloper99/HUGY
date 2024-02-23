@@ -3,7 +3,7 @@ import 'package:hugy/auth/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:hugy/screens/activities/meditation_page.dart';
 import 'package:hugy/screens/contacts.dart';
-import 'package:hugy/screens/discover.dart';
+import 'package:hugy/screens/advice.dart';
 import 'package:hugy/screens/journal.dart';
 import 'package:hugy/screens/profile.dart';
 
@@ -73,8 +73,10 @@ class _HomeState extends State<Home> {
               const Icon(Icons.chat),
               TextButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (ctx) => const ContactsPage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => const ContactsPage()));
                   },
                   child: const Text("Chat with AI"))
             ],
@@ -91,8 +93,10 @@ class _HomeState extends State<Home> {
               const Icon(Icons.book),
               TextButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (ctx) => const JournalPage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => const JournalPage()));
                   },
                   child: const Text("Add new journal entry"))
             ],
@@ -109,8 +113,10 @@ class _HomeState extends State<Home> {
               const Icon(Icons.chat),
               TextButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (ctx) => const MeditationPage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => const MeditationPage()));
                   },
                   child: const Text("Meditate"))
             ],
@@ -127,8 +133,10 @@ class _HomeState extends State<Home> {
               const Icon(Icons.chat),
               TextButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (ctx) => const DiscoverPage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => const DiscoverPage()));
                   },
                   child: const Text("Recommendations"))
             ],

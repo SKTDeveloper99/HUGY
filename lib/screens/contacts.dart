@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hugy/chat/chat.dart';
 import 'package:hugy/screens/chat.dart';
+import 'package:uuid/uuid.dart';
 
 List<Map<String, dynamic>> chatBots = [
   {
@@ -107,12 +108,12 @@ class _ContactsPageState extends State<ContactsPage> {
                                 FirebaseAuth.instance.currentUser!.uid;
                             Chat chat = Chat(
                                 chatName: chatBots[index]["name"],
-                                id: (userId.hashCode + Random().nextInt(100))
-                                    .toString(),
+                                id: const Uuid().v4(),
                                 messages: [],
                                 owner: userId,
                                 behavior: chatBots[index]["behavior"]);
                             await ChatService().createNewChat(chat);
+                            if (!mounted) return;
                             Navigator.of(context).pop();
                           },
                         );

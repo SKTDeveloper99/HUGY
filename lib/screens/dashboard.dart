@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hugy/auth/firebase.dart';
 import 'package:hugy/screens/contacts.dart';
-import 'package:hugy/screens/discover.dart';
+import 'package:hugy/screens/advice.dart';
 import 'package:hugy/screens/journal.dart';
 import 'package:hugy/screens/life_timer.dart';
 import 'package:hugy/screens/profile.dart';

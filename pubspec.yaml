@@ -43,6 +43,7 @@ dependencies:
   yaru: ^1.2.1
   file_picker: ^6.1.1
   firebase_storage: ^11.6.0
+  uuid: ^4.3.3
 
 dev_dependencies:
   flutter_launcher_icons: "^0.13.1"
