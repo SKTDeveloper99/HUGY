@@ -33,13 +33,17 @@ class _TaskPageState extends State<TaskPage> {
             .asBroadcastStream(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
+            if (snapshot.data!.docs.isEmpty) {
+              return const Center(
+                child: Text('No tasks yet!', style: TextStyle(fontSize: 40)),
+              );
+            }
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (BuildContext context, int index) {
                 Task task = Task.fromJson(
                     snapshot.data!.docs[index].data() as Map<String, dynamic>);
 
-                print(task);
                 return Card(
                   child: Dismissible(
                     key: Key(snapshot.data!.docs[index].id),

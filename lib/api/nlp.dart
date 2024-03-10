@@ -29,6 +29,12 @@ Future<List<String>> getActivity() async {
 
   var query = collection.orderBy('timeCreated', descending: true).limit(1);
 
+  if (await query.get().then(
+        (value) => value.size == 0,
+      )) {
+    return [];
+  }
+
   var snapshot =
       (await query.get().then((value) => value.docs[0].data()))['content'];
 
