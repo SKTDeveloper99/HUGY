@@ -21,7 +21,12 @@ class _LifeTimerState extends State<LifeTimer> {
         .get();
 
     try {
-      return userDoc.get("birthday").toDate();
+      if (!(userDoc.data() as Map).containsKey("birthday")) {
+        return null;
+      }
+
+      final birthday = userDoc.get("birthday");
+      return birthday.toDate();
     } catch (e) {
       return null;
     }
@@ -51,7 +56,7 @@ class _LifeTimerState extends State<LifeTimer> {
   Widget buildDatePicker() {
     return SizedBox(
       width: 200,
-      height: 200,
+      height: 300,
       child: Center(
         child: ElevatedButton(
           onPressed: () async {
@@ -88,58 +93,79 @@ class _LifeTimerState extends State<LifeTimer> {
         : 0;
 
     return SafeArea(
-        child: Scaffold(
-            appBar: AppBar(),
-            body: Center(
-              child: Center(
-                child: SizedBox(
-                    width: 300,
-                    height: 250,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: CustomPaint(
-                            willChange: false,
-                            painter: Battery(
-                                currentLife: DateTime.now()
-                                    .difference(birthday ?? DateTime.now())),
-                            child: SizedBox(
-                              child: Center(
-                                child: Text(
-                                  "${yearsOld / 80 * 100}%",
-                                  style: const TextStyle(
-                                      fontSize: 24,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Center(
+          child: Center(
+            child: SizedBox(
+              width: 300,
+              height: 250,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  birthday == null
+                      ? const Text("Please set your birthday",
+                          style: TextStyle(fontSize: 24))
+                      : SizedBox(),
+                  const SizedBox(height: 30),
+                  Expanded(
+                    child: CustomPaint(
+                      willChange: false,
+                      painter: Battery(
+                        currentLife: DateTime.now()
+                            .difference(birthday ?? DateTime.now()),
+                      ),
+                      child: SizedBox(
+                        child: Center(
+                          child: Text(
+                            "${yearsOld / 80 * 100}%",
+                            style: const TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 30),
-                        Expanded(
-                          child: RichText(
-                            text: TextSpan(
-                              text:
-                                  "Assuming you live to 80 years old, you are ",
-                              style: const TextStyle(fontSize: 24),
-                              children: [
-                                TextSpan(
-                                  text:
-                                      "${yearsOld / 80 * 100}% through your life",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 24),
-                                )
-                              ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        text: "Assuming you live to 80 years old, you are ",
+                        style: const TextStyle(fontSize: 24),
+                        children: [
+                          TextSpan(
+                            text: "${yearsOld / 80 * 100}% through your life",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
                             ),
                           ),
-                        )
-                      ],
-                    )),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (birthday == null)
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => buildDatePicker(),
+                          ),
+                        );
+                      },
+                      child: const Text('Set Birthday'),
+                    ),
+                ],
               ),
-            )));
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

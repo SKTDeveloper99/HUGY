@@ -36,7 +36,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
           child: FutureBuilder<List<String>>(
               future: getActivity(),
               builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
+                if (snapshot.hasData &&
+                    snapshot.data != null &&
+                    snapshot.data!.isNotEmpty) {
                   return ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -55,8 +57,29 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   );
                 }
 
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      CircularProgressIndicator(),
+                      Text("Loading recommendations..."),
+                      SizedBox(height: 10),
+                      CheckBackLater(),
+                    ],
+                  ),
+                );
               })),
+    );
+  }
+}
+
+class CheckBackLater extends StatelessWidget {
+  const CheckBackLater({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text("Check back later if recommendations don't load."),
     );
   }
 }

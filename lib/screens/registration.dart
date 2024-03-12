@@ -51,8 +51,10 @@ class _LoginPageState extends State<LoginPage> {
                           _loginError = true;
                         });
                       } else {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (ctx) => const AuthGate()));
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) => const AuthGate()));
                       }
                     });
                     // FINISHED ADDING NEW FEATURE
@@ -61,8 +63,10 @@ class _LoginPageState extends State<LoginPage> {
               ),
               TextButton(
                   onPressed: () {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (_) => const Registration()));
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const Registration()));
                   },
                   child: const Text("Create an account instead")),
             ],
@@ -164,7 +168,7 @@ class _RegistrationState extends State<Registration> {
                               .createNewUser(email, password);
 
                           if (result) {
-                            if (mounted) {
+                            if (!mounted) {
                               return;
                             }
                             Navigator.of(context).pushReplacement(
