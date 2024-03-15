@@ -18,6 +18,7 @@ class App extends StatelessWidget {
     return YaruTheme(builder: (context, yaru, child) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
+        debugShowMaterialGrid: false,
         theme: yaruSageDark,
         home: const AuthGate(),
       );
